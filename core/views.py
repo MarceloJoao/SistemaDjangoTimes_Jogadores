@@ -1,61 +1,60 @@
-from urllib import request
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Time, Jogador
 from .forms import TimeForm, JogadorForm
 
-#Referente a time
-def list_times(request):
-    times = Time.objects.all()
-    return render(request, 'core/list_times.html', {'times': times})
+# TIMES
 
-def add_time(request):
+def home(request):
+    return render(request, 'home.html')
+def lista_times(request):
+    times = Time.objects.all()
+    return render(request, 'lista_times.html', {'times': times})
+
+def novo_time(request):
     form = TimeForm(request.POST or None)
     if form.is_valid():
         form.save()
-        return redirect('list_times')
-    return render(request, 'core/form_time.html', {'form': form })
+        return redirect('lista_times')
+    return render(request, 'form_time.html', {'form': form})
 
-def edit_time(request, id):
-    time = get_object_or_404(time, pk=id)
+def editar_time(request, id):
+    time = get_object_or_404(Time, pk=id)
     form = TimeForm(request.POST or None, instance=time)
     if form.is_valid():
         form.save()
-        return redirect('list_times')
-    return render(request, 'core/form_time.html', {'form': form})
+        return redirect('lista_times')
+    return render(request, 'form_time.html', {'form': form})
 
-def delete_time(request, id):
+def deletar_time(request, id):
     time = get_object_or_404(Time, pk=id)
     if request.method == 'POST':
         time.delete()
         return redirect('lista_times')
-    return render(request, 'core/confirmar_exclusao.html', {'obj': time})
+    return render(request, 'confirmar_exclusao.html', {'obj': time})
 
-#Referente a jogadores
-
-def list_jogadores(request):
-    #referencia ao time
+# JOGADORES
+def lista_jogadores(request):
     jogadores = Jogador.objects.select_related('time').all()
-    return render(request, 'core/list_jogadores.html', {'jogadores': jogadores})
+    return render(request, 'lista_jogadores.html', {'jogadores': jogadores})
 
-def add_jogador(request):
+def novo_jogador(request):
     form = JogadorForm(request.POST or None)
     if form.is_valid():
         form.save()
-        return redirect('list_jogadores')
-    return render(request, 'core/form_jogador.html', {'form': form})
+        return redirect('lista_jogadores')
+    return render(request, 'form_jogador.html', {'form': form})
 
-def edit_jogador(request, id):
+def editar_jogador(request, id):
     jogador = get_object_or_404(Jogador, pk=id)
     form = JogadorForm(request.POST or None, instance=jogador)
     if form.is_valid():
         form.save()
         return redirect('lista_jogadores')
-    return render(request, 'core/form_jogador.html', {'form': form})
+    return render(request, 'form_jogador.html', {'form': form})
 
-def delete_jogador(request, id):
+def deletar_jogador(request, id):
     jogador = get_object_or_404(Jogador, pk=id)
     if request.method == 'POST':
         jogador.delete()
         return redirect('lista_jogadores')
-    return render(request, 'core/confirmar_exclusao.html', {'obj': jogador})
-
+    return render(request, 'confirmar_exclusao.html', {'obj': jogador})
